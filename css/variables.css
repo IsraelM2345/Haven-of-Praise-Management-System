@@ -1,0 +1,35 @@
+/* ========================================= */
+/*            VARIABLES & THEMES             */
+/* ========================================= */
+:root {
+  /* Layout */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 80px;
+  --transition-speed: 0.3s;
+
+  /* Light Theme Colors */
+  --sidebar-bg: #111827;
+  --sidebar-text: #9ca3af;
+  --sidebar-active-text: #fbbf24;
+  --main-bg: #f9fafb;
+  --card-bg: #ffffff;
+  --text-primary: #1f2937;
+  --text-muted: #6b7280;
+  --accent-blue: #1e3a8a;
+  --accent-blue-hover: #172554;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --info-color: #3b82f6;
+  --border-color: #f3f4f6;
+  --input-bg: #ffffff;
+}
+
+/* Dark Theme Colors */
+[data-theme="dark"] {
+  --main-bg: #0f172a;
+  --card-bg: #1e293b;
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --input-bg: #0f172a;
+}

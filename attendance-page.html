@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Haven of Praise - Attendance</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+
+    <style>
+      /* --- Toggle Buttons --- */
+      .custom-toggle-bg {
+        background-color: #f3f4f6;
+        border-radius: 50px;
+        transition: background-color var(--transition-speed) ease;
+      }
+      .custom-toggle-btn {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        border: none;
+        padding: 0.5rem 1.25rem;
+        transition: all 0.3s ease;
+        background: transparent;
+      }
+      .custom-toggle-btn:hover {
+        color: var(--text-primary);
+      }
+      .custom-toggle-btn.active {
+        background-color: var(--card-bg);
+        color: var(--accent-blue);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      /* --- QR Code Section --- */
+      .qr-placeholder {
+        height: 180px;
+        background-color: #f9fafb;
+        border-radius: 12px;
+        transition: background-color var(--transition-speed) ease;
+      }
+      .qr-corners {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+      }
+      .corner {
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        border-color: #9ca3af;
+        border-style: solid;
+      }
+      .top-left {
+        top: 0;
+        left: 0;
+        border-width: 2px 0 0 2px;
+      }
+      .top-right {
+        top: 0;
+        right: 0;
+        border-width: 2px 2px 0 0;
+      }
+      .bottom-left {
+        bottom: 0;
+        left: 0;
+        border-width: 0 0 2px 2px;
+      }
+      .bottom-right {
+        bottom: 0;
+        right: 0;
+        border-width: 0 2px 2px 0;
+      }
+
+      /* --- Stat Boxes --- */
+      .stat-box {
+        background-color: #f9fafb;
+        transition: background-color var(--transition-speed) ease;
+      }
+
+      /* --- Table Customization --- */
+      .custom-table {
+        margin-bottom: 0;
+      }
+      .custom-table th {
+        font-weight: 500;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+        font-size: 0.875rem;
+        background-color: transparent;
+      }
+      .custom-table td {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.2rem 0.5rem;
+        background-color: transparent;
+        color: var(--text-primary);
+      }
+      .custom-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* --- Live Indicator Animation --- */
+      .live-indicator {
+        width: 10px;
+        height: 10px;
+        background-color: var(--success-color);
+        border-radius: 50%;
+        display: inline-block;
+        position: relative;
+      }
+      .live-indicator::after {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        border-radius: 50%;
+        border: 2px solid var(--success-color);
+        animation: pulse 1.5s infinite;
+        opacity: 0;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1.5);
+          opacity: 0;
+        }
+      }
+
+      /* --- Dark Mode Tweaks for Internal CSS --- */
+      [data-theme="dark"] .custom-toggle-bg {
+        background-color: var(--input-bg);
+      }
+      [data-theme="dark"] .custom-toggle-btn.active {
+        color: var(--text-primary);
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+      }
+      [data-theme="dark"] .qr-placeholder,
+      [data-theme="dark"] .stat-box {
+        background-color: rgba(255, 255, 255, 0.03);
+      }
+
+      /* --- Mobile Adjustments --- */
+      @media (max-width: 575.98px) {
+        .custom-toggle-bg {
+          width: 100%;
+          display: flex;
+        }
+        .custom-toggle-btn {
+          flex: 1;
+          padding: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container d-flex">
+      <div class="sidebar-overlay"></div>
+
+      <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="sidebar-brand d-flex align-items-center">
+          <div class="brand-icon me-3">
+            <img
+              src="assets/images/logo.png"
+              alt="Haven of Praise Logo"
+              onerror="
+                this.src = 'https://placehold.co/40x40/111827/fbbf24?text=HoP'
+              "
+            />
+          </div>
+          <div class="brand-text">
+            <h6 class="mb-0 text-white fw-bold">Haven of Praise</h6>
+            <small class="text-muted-sidebar">Management System</small>
+          </div>
+        </div>
+
+        <button class="sidebar-collapse-btn d-none d-lg-flex" id="collapseBtn">
+          <i class="bi bi-chevron-left transition-icon"></i>
+        </button>
+
+        <ul class="nav flex-column sidebar-nav mt-4 flex-grow-1">
+          <li class="nav-item">
+            <a class="nav-link" href="dashboard-page.html">
+              <i class="bi bi-grid-1x2"></i
+              ><span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="attendance-page.html">
+              <i class="bi bi-people"></i
+              ><span class="nav-text">Attendance</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="inventory-page.html">
+              <i class="bi bi-box-seam"></i
+              ><span class="nav-text">Inventory</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="calendar-page.html">
+              <i class="bi bi-calendar4"></i
+              ><span class="nav-text">Calendar</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="members-page.html">
+              <i class="bi bi-person-badge"></i
+              ><span class="nav-text">Members</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reports-page.html">
+              <i class="bi bi-bar-chart"></i
+              ><span class="nav-text">Reports</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="activity-log-page.html">
+              <i class="bi bi-clock-history"></i
+              ><span class="nav-text">Activity Log</span>
+            </a>
+          </li>
+          <li class="nav-item mt-2 border-top border-secondary pt-2">
+            <a class="nav-link" href="settings-page.html">
+              <i class="bi bi-gear"></i><span class="nav-text">Settings</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-danger-hover" href="login-page.html">
+              <i class="bi bi-box-arrow-right"></i>
+              <span class="nav-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-user d-flex align-items-center mt-auto">
+          <div class="user-avatar">AD</div>
+          <div class="ms-3 user-text">
+            <h6 class="mb-0 text-white fw-semibold fs-sm">Admin User</h6>
+            <small class="text-muted-sidebar fs-xs">System Administrator</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content flex-grow-1">
+        <header class="top-nav mb-5 pb-3">
+          <div class="d-flex align-items-center gap-3">
+            <button
+              class="btn d-lg-none p-0 border-0 fs-3 text-dark-blue"
+              id="mobileMenuBtn"
+            >
+              <i class="bi bi-list"></i>
+            </button>
+            <h4 class="mb-0 fw-bold header-title fs-5">Attendance</h4>
+          </div>
+
+          <div class="d-flex align-items-center gap-4">
+            <div class="search-bar-container d-none d-sm-block">
+              <input
+                type="text"
+                class="form-control custom-search"
+                placeholder="Search anything..."
+              />
+            </div>
+
+            <button
+              class="btn btn-link text-dark-blue p-0 fs-5 d-flex align-items-center"
+              id="themeToggle"
+              title="Toggle Theme"
+            >
+              <i class="bi bi-moon-stars"></i>
+            </button>
+
+            <div class="notification-bell">
+              <i class="bi bi-bell"></i>
+              <span class="notification-dot"></span>
+            </div>
+          </div>
+        </header>
+
+        <div
+          class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3"
+        >
+          <div>
+            <h2 class="h4 fw-bold mb-1 text-dark-blue">
+              Attendance Monitoring
+            </h2>
+            <p class="text-muted-custom mb-0 fs-sm">
+              Real-time tracking and location verification.
+            </p>
+          </div>
+          <div class="custom-toggle-bg p-1 d-flex">
+            <button class="btn custom-toggle-btn active rounded-pill">
+              Live Tracking
+            </button>
+            <button class="btn custom-toggle-btn rounded-pill">
+              Records & Reports
+            </button>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-xl-4 col-lg-5">
+            <div class="card custom-card mb-4">
+              <div class="card-body p-4">
+                <h6 class="fw-bold mb-4 text-dark-blue">Active Session</h6>
+
+                <div
+                  class="qr-placeholder mb-4 d-flex justify-content-center align-items-center position-relative"
+                >
+                  <div class="qr-corners">
+                    <span class="corner top-left"></span>
+                    <span class="corner top-right"></span>
+                    <span class="corner bottom-left"></span>
+                    <span class="corner bottom-right"></span>
+                  </div>
+                  <button
+                    class="btn btn-dark-blue rounded-3 px-4 py-2 shadow-sm position-relative z-1"
+                  >
+                    Enlarge QR
+                  </button>
+                </div>
+
+                <div class="text-center mb-4">
+                  <h6 class="fw-bold text-dark-blue mb-1">
+                    Sunday Worship Service
+                  </h6>
+                  <p class="text-muted-custom fs-xs mb-0">
+                    Oct 15, 2023 • 9:00 AM
+                  </p>
+                </div>
+
+                <div class="d-flex gap-3">
+                  <div class="stat-box flex-fill text-center p-3 rounded-4">
+                    <p class="text-muted-custom fs-xs mb-1">Checked In</p>
+                    <h3 class="fw-bold text-dark-blue mb-0">142</h3>
+                  </div>
+                  <div class="stat-box flex-fill text-center p-3 rounded-4">
+                    <p class="text-muted-custom fs-xs mb-1">Expected</p>
+                    <h3 class="fw-bold text-dark-blue mb-0">250</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card custom-card">
+              <div class="card-body p-4">
+                <h6 class="fw-bold mb-4 text-dark-blue">Location Status</h6>
+
+                <div
+                  class="d-flex justify-content-between align-items-center mb-3"
+                >
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-geo-alt text-success me-2"></i>
+                    <span class="text-dark-blue fs-sm fw-medium"
+                      >Main Hall</span
+                    >
+                  </div>
+                  <span class="fw-bold text-success">110</span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-geo-alt text-muted-custom me-2"></i>
+                    <span class="text-dark-blue fs-sm fw-medium"
+                      >Children's Room</span
+                    >
+                  </div>
+                  <span class="fw-bold text-dark-blue">32</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-8 col-lg-7">
+            <div class="card custom-card h-100">
+              <div class="card-body p-4">
+                <div
+                  class="d-flex justify-content-between align-items-center mb-4"
+                >
+                  <h6 class="fw-bold text-dark-blue mb-0">Live Feed</h6>
+                  <div
+                    class="d-flex align-items-center text-muted-custom fs-sm"
+                  >
+                    <span class="live-indicator me-2"></span> Updating in
+                    real-time
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table custom-table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <span class="fw-semibold text-dark-blue d-block fs-sm"
+                            >Juan dela</span
+                          >
+                          <span class="fw-semibold text-dark-blue fs-sm"
+                            >Cruz</span
+                          >
+                        </td>
+                        <td class="text-muted-custom fs-sm">
+                          <div class="d-flex align-items-center gap-1">
+                            <i class="bi bi-clock"></i> 08:45 AM
+                          </div>
+                        </td>
+                        <td class="text-muted-custom fs-sm">Main Hall</td>
+                        <td class="text-muted-custom fs-sm">
+                          <span class="d-block">QR</span>Scan
+                        </td>
+                        <td>
+                          <span
+                            class="status-badge status-verified px-2 py-1 rounded-pill bg-success bg-opacity-10"
+                          >
+                            <i class="bi bi-check-circle me-1"></i> Verified
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <span class="fw-semibold text-dark-blue d-block fs-sm"
+                            >Maria</span
+                          >
+                          <span class="fw-semibold text-dark-blue fs-sm"
+                            >Santos</span
+                          >
+                        </td>
+                        <td class="text-muted-custom fs-sm">
+                          <div class="d-flex align-items-center gap-1">
+                            <i class="bi bi-clock"></i> 08:50 AM
+                          </div>
+                        </td>
+                        <td class="text-muted-custom fs-sm">Main Hall</td>
+                        <td class="text-muted-custom fs-sm">
+                          <span class="d-block">QR</span>Scan
+                        </td>
+                        <td>
+                          <span
+                            class="status-badge status-verified px-2 py-1 rounded-pill bg-success bg-opacity-10"
+                          >
+                            <i class="bi bi-check-circle me-1"></i> Verified
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <span class="fw-semibold text-dark-blue d-block fs-sm"
+                            >Pedro</span
+                          >
+                          <span class="fw-semibold text-dark-blue fs-sm"
+                            >Reyes</span
+                          >
+                        </td>
+                        <td class="text-muted-custom fs-sm">
+                          <div class="d-flex align-items-center gap-1">
+                            <i class="bi bi-clock"></i> 09:05 AM
+                          </div>
+                        </td>
+                        <td class="text-muted-custom fs-sm">Main Hall</td>
+                        <td class="text-muted-custom fs-sm">Manual</td>
+                        <td>
+                          <span
+                            class="status-badge status-late px-2 py-1 rounded-pill bg-danger bg-opacity-10"
+                          >
+                            <i class="bi bi-x-circle me-1"></i> Late
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <span class="fw-semibold text-dark-blue d-block fs-sm"
+                            >Ana Lim</span
+                          >
+                        </td>
+                        <td class="text-muted-custom fs-sm">
+                          <div class="d-flex align-items-center gap-1">
+                            <i class="bi bi-clock"></i> 08:30 AM
+                          </div>
+                        </td>
+                        <td class="text-muted-custom fs-sm">
+                          <span class="d-block">Childrens</span>Room
+                        </td>
+                        <td class="text-muted-custom fs-sm">
+                          <span class="d-block">QR</span>Scan
+                        </td>
+                        <td>
+                          <span
+                            class="status-badge status-verified px-2 py-1 rounded-pill bg-success bg-opacity-10"
+                          >
+                            <i class="bi bi-check-circle me-1"></i> Verified
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <span class="fw-semibold text-dark-blue d-block fs-sm"
+                            >Mark</span
+                          >
+                          <span class="fw-semibold text-dark-blue fs-sm"
+                            >Bautista</span
+                          >
+                        </td>
+                        <td class="text-muted-custom fs-sm">
+                          <div class="d-flex align-items-center gap-1">
+                            <i class="bi bi-clock"></i> 09:15 AM
+                          </div>
+                        </td>
+                        <td class="text-muted-custom fs-sm">Main Hall</td>
+                        <td class="text-muted-custom fs-sm">
+                          <span class="d-block">QR</span>Scan
+                        </td>
+                        <td>
+                          <span
+                            class="status-badge status-late px-2 py-1 rounded-pill bg-danger bg-opacity-10"
+                          >
+                            <i class="bi bi-x-circle me-1"></i> Late
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <span class="fw-semibold text-dark-blue d-block fs-sm"
+                            >Sarah</span
+                          >
+                          <span class="fw-semibold text-dark-blue fs-sm"
+                            >Geronimo</span
+                          >
+                        </td>
+                        <td class="text-muted-custom fs-sm">
+                          <div class="d-flex align-items-center gap-1">
+                            <i class="bi bi-clock"></i> 08:40 AM
+                          </div>
+                        </td>
+                        <td class="text-muted-custom fs-sm">Main Hall</td>
+                        <td class="text-muted-custom fs-sm">
+                          <span class="d-block">QR</span>Scan
+                        </td>
+                        <td>
+                          <span
+                            class="status-badge status-verified px-2 py-1 rounded-pill bg-success bg-opacity-10"
+                          >
+                            <i class="bi bi-check-circle me-1"></i> Verified
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

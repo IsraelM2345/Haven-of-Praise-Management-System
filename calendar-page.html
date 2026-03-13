@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Haven of Praise - Calendar</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+
+    <style>
+      /* --- Calendar Grid --- */
+      .calendar-container {
+        width: 100%;
+      }
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.5rem;
+        text-align: center;
+      }
+      .calendar-day-header {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        font-weight: 500;
+        padding-bottom: 1rem;
+      }
+      .calendar-date {
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.25rem;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+        cursor: pointer;
+      }
+      .calendar-date:hover {
+        background-color: #f9fafb;
+      }
+      .date-number {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+        transition:
+          background-color 0.2s,
+          color 0.2s;
+      }
+      .date-number.active {
+        background-color: var(--accent-blue);
+        color: white !important;
+      }
+      .date-number.text-muted-light {
+        color: #d1d5db !important;
+      }
+
+      /* --- Calendar Events --- */
+      .calendar-event {
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-align: left;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+
+      /* --- Event Sidebar Timeline --- */
+      .event-item-border {
+        border-left: 2px solid transparent;
+        padding-left: 1rem;
+        position: relative;
+      }
+      .event-item-border::before {
+        content: "";
+        position: absolute;
+        left: -6px;
+        top: 6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .event-item-blue::before {
+        background-color: var(--accent-blue);
+      }
+      .event-item-teal::before {
+        background-color: #0d9488;
+      }
+      .event-item-gold::before {
+        background-color: #d97706;
+      }
+
+      /* --- Colors & Indicators --- */
+      .text-teal {
+        color: #0d9488 !important;
+      }
+      .text-gold {
+        color: #d97706 !important;
+      }
+      .bg-teal {
+        background-color: #0d9488 !important;
+      }
+      .bg-gold {
+        background-color: #d97706 !important;
+      }
+      .bg-dark-blue {
+        background-color: var(--accent-blue) !important;
+      }
+
+      .dot-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+      }
+
+      /* --- Dark Mode Tweaks for Calendar --- */
+      [data-theme="dark"] .calendar-date:hover {
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.05
+        ); /* Dark mode hover effect */
+      }
+      [data-theme="dark"] .date-number.text-muted-light {
+        color: #334155 !important; /* Makes inactive dates slightly visible in dark mode */
+      }
+      [data-theme="dark"] .btn-gold {
+        background-color: var(--sidebar-active-text) !important;
+        color: #111827 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container d-flex">
+      <div class="sidebar-overlay"></div>
+
+      <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="sidebar-brand d-flex align-items-center">
+          <div class="brand-icon me-3">
+            <img
+              src="assets/images/logo.png"
+              alt="Haven of Praise Logo"
+              onerror="
+                this.src = 'https://placehold.co/40x40/111827/fbbf24?text=HoP'
+              "
+            />
+          </div>
+          <div class="brand-text">
+            <h6 class="mb-0 text-white fw-bold">Haven of Praise</h6>
+            <small class="text-muted-sidebar">Management System</small>
+          </div>
+        </div>
+
+        <button class="sidebar-collapse-btn d-none d-lg-flex" id="collapseBtn">
+          <i class="bi bi-chevron-left transition-icon"></i>
+        </button>
+
+        <ul class="nav flex-column sidebar-nav mt-4 flex-grow-1">
+          <li class="nav-item">
+            <a class="nav-link" href="dashboard-page.html">
+              <i class="bi bi-grid-1x2"></i
+              ><span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="attendance-page.html">
+              <i class="bi bi-people"></i
+              ><span class="nav-text">Attendance</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="inventory-page.html">
+              <i class="bi bi-box-seam"></i
+              ><span class="nav-text">Inventory</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="calendar-page.html">
+              <i class="bi bi-calendar4"></i
+              ><span class="nav-text">Calendar</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="members-page.html">
+              <i class="bi bi-person-badge"></i
+              ><span class="nav-text">Members</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reports-page.html">
+              <i class="bi bi-bar-chart"></i
+              ><span class="nav-text">Reports</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="activity-log-page.html">
+              <i class="bi bi-clock-history"></i
+              ><span class="nav-text">Activity Log</span>
+            </a>
+          </li>
+          <li class="nav-item mt-2 border-top border-secondary pt-2">
+            <a class="nav-link" href="settings-page.html">
+              <i class="bi bi-gear"></i><span class="nav-text">Settings</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-danger-hover" href="login-page.html">
+              <i class="bi bi-box-arrow-right"></i>
+              <span class="nav-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-user d-flex align-items-center mt-auto">
+          <div class="user-avatar">AD</div>
+          <div class="ms-3 user-text">
+            <h6 class="mb-0 text-white fw-semibold fs-sm">Admin User</h6>
+            <small class="text-muted-sidebar fs-xs">System Administrator</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content flex-grow-1">
+        <header class="top-nav mb-5 pb-3">
+          <div class="d-flex align-items-center gap-3">
+            <button
+              class="btn d-lg-none p-0 border-0 fs-3 text-dark-blue"
+              id="mobileMenuBtn"
+            >
+              <i class="bi bi-list"></i>
+            </button>
+            <h4 class="mb-0 fw-bold header-title fs-5">Calendar</h4>
+          </div>
+
+          <div class="d-flex align-items-center gap-4">
+            <div class="search-bar-container d-none d-sm-block">
+              <input
+                type="text"
+                class="form-control custom-search"
+                placeholder="Search anything..."
+              />
+            </div>
+
+            <button
+              class="btn btn-link text-dark-blue p-0 fs-5 d-flex align-items-center"
+              id="themeToggle"
+              title="Toggle Theme"
+            >
+              <i class="bi bi-moon-stars"></i>
+            </button>
+
+            <div class="notification-bell">
+              <i class="bi bi-bell"></i>
+              <span class="notification-dot"></span>
+            </div>
+          </div>
+        </header>
+
+        <div
+          class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3"
+        >
+          <div>
+            <h2 class="h3 fw-bold mb-1 text-dark-blue">
+              Calendar & Scheduling
+            </h2>
+            <p class="text-muted-custom mb-0 fs-sm">
+              Manage church events, services, and facility bookings.
+            </p>
+          </div>
+          <div>
+            <button
+              class="btn btn-gold fw-semibold px-4 py-2 rounded-3 shadow-sm d-flex align-items-center gap-2"
+              style="
+                background-color: var(--sidebar-active-text);
+                color: #111827;
+                border: none;
+              "
+            >
+              <i class="bi bi-plus-lg"></i> New Event
+            </button>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-xl-8 col-lg-7">
+            <div class="card custom-card h-100">
+              <div class="card-body p-4 p-md-5">
+                <div
+                  class="d-flex justify-content-between align-items-center mb-5"
+                >
+                  <div class="d-flex align-items-center gap-4">
+                    <h5 class="fw-bold text-dark-blue mb-0">October 2023</h5>
+                    <div class="d-flex gap-3 text-muted-custom fs-5">
+                      <i class="bi bi-chevron-left" style="cursor: pointer"></i>
+                      <i
+                        class="bi bi-chevron-right"
+                        style="cursor: pointer"
+                      ></i>
+                    </div>
+                  </div>
+                  <button
+                    class="btn btn-link text-dark-blue text-decoration-none fw-semibold p-0"
+                  >
+                    Today
+                  </button>
+                </div>
+
+                <div class="calendar-container">
+                  <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+
+                    <div class="calendar-date">
+                      <span class="date-number text-muted-light">29</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number text-muted-light">30</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">1</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">2</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">3</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">4</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">5</span>
+                    </div>
+
+                    <div class="calendar-date">
+                      <span class="date-number">6</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">7</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">8</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">9</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">10</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">11</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">12</span>
+                    </div>
+
+                    <div class="calendar-date">
+                      <span class="date-number">13</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">14</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number active">15</span>
+                      <span
+                        class="calendar-event text-dark-blue"
+                        style="background-color: rgba(30, 58, 138, 0.1)"
+                        >9:00 AM...</span
+                      >
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">16</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">17</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">18</span>
+                      <span
+                        class="calendar-event text-teal"
+                        style="background-color: rgba(13, 148, 136, 0.1)"
+                        >6:00 PM...</span
+                      >
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">19</span>
+                    </div>
+
+                    <div class="calendar-date">
+                      <span class="date-number">20</span>
+                      <span
+                        class="calendar-event text-gold"
+                        style="background-color: rgba(217, 119, 6, 0.1)"
+                        >7:30 PM...</span
+                      >
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">21</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">22</span>
+                      <span
+                        class="calendar-event text-dark-blue"
+                        style="background-color: rgba(30, 58, 138, 0.1)"
+                        >9:00 AM...</span
+                      >
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">23</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">24</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">25</span>
+                      <span
+                        class="calendar-event text-teal"
+                        style="background-color: rgba(13, 148, 136, 0.1)"
+                        >7:00 PM...</span
+                      >
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">26</span>
+                    </div>
+
+                    <div class="calendar-date">
+                      <span class="date-number">27</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">28</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">29</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">30</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number">31</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number text-muted-light">1</span>
+                    </div>
+                    <div class="calendar-date">
+                      <span class="date-number text-muted-light">2</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 col-lg-5 d-flex flex-column gap-4">
+            <div class="card custom-card flex-grow-1">
+              <div class="card-body p-4 p-md-5 d-flex flex-column">
+                <h6 class="fw-bold text-dark-blue mb-4">Upcoming Events</h6>
+
+                <div class="d-flex flex-column gap-4 flex-grow-1">
+                  <div class="event-item-border event-item-blue">
+                    <h6 class="fw-semibold text-dark-blue mb-1 fs-sm">
+                      Sunday Worship Service
+                    </h6>
+                    <div
+                      class="d-flex align-items-center text-muted-custom fs-xs mb-1 gap-2"
+                    >
+                      <i class="bi bi-clock"></i> Oct 15 • 9:00 AM - 11:30 AM
+                    </div>
+                    <div
+                      class="d-flex align-items-center text-muted-custom fs-xs gap-2"
+                    >
+                      <i class="bi bi-geo-alt"></i> Main Hall
+                    </div>
+                  </div>
+
+                  <div class="event-item-border event-item-teal">
+                    <h6 class="fw-semibold text-dark-blue mb-1 fs-sm">
+                      Youth Ministry Fellowship
+                    </h6>
+                    <div
+                      class="d-flex align-items-center text-muted-custom fs-xs mb-1 gap-2"
+                    >
+                      <i class="bi bi-clock"></i> Oct 18 • 6:00 PM - 8:00 PM
+                    </div>
+                    <div
+                      class="d-flex align-items-center text-muted-custom fs-xs gap-2"
+                    >
+                      <i class="bi bi-geo-alt"></i> Youth Room
+                    </div>
+                  </div>
+
+                  <div class="event-item-border event-item-gold">
+                    <h6 class="fw-semibold text-dark-blue mb-1 fs-sm">
+                      Leadership Meeting
+                    </h6>
+                    <div
+                      class="d-flex align-items-center text-muted-custom fs-xs mb-1 gap-2"
+                    >
+                      <i class="bi bi-clock"></i> Oct 20 • 7:30 PM - 9:00 PM
+                    </div>
+                    <div
+                      class="d-flex align-items-center text-muted-custom fs-xs gap-2"
+                    >
+                      <i class="bi bi-geo-alt"></i> Conference Room
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="text-center mt-4 pt-3 border-top"
+                  style="border-color: var(--border-color) !important"
+                >
+                  <button
+                    class="btn btn-link text-decoration-none text-dark-blue fw-semibold fs-sm p-0"
+                  >
+                    View All Events
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card custom-card">
+              <div class="card-body p-4 p-md-5">
+                <h6 class="fw-bold text-dark-blue mb-4">Legend</h6>
+                <div class="d-flex flex-column gap-3">
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="dot-indicator bg-dark-blue"></span>
+                    <span class="text-muted-custom fs-sm">Church Services</span>
+                  </div>
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="dot-indicator bg-teal"></span>
+                    <span class="text-muted-custom fs-sm"
+                      >Ministry Activities</span
+                    >
+                  </div>
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="dot-indicator bg-gold"></span>
+                    <span class="text-muted-custom fs-sm"
+                      >Meetings & Admin</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

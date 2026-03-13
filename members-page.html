@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Haven of Praise - Members</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+
+    <style>
+      /* --- Stats Section --- */
+      .stats-label {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+      .stats-value {
+        color: var(--text-primary);
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      .stats-value.text-success {
+        color: var(--success-color) !important;
+      }
+
+      /* --- Member Table Specifics --- */
+      .member-avatar {
+        width: 38px;
+        height: 38px;
+        background-color: #f3f4f6;
+        color: #374151;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        transition:
+          background-color var(--transition-speed) ease,
+          color var(--transition-speed) ease;
+      }
+
+      .contact-info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 0.25rem;
+      }
+      .contact-info-item i {
+        font-size: 0.9rem;
+        color: #9ca3af;
+        transition: color var(--transition-speed) ease;
+      }
+
+      /* --- Stretch Card Fix (Matches Inventory Page) --- */
+      .stretch-card {
+        min-height: calc(100vh - 280px);
+      }
+      .members-table td {
+        padding: 1.5rem 0.5rem !important;
+      }
+
+      /* --- Pagination --- */
+      .pagination-container {
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.5rem;
+        margin-top: 1rem;
+      }
+
+      .btn-pagination {
+        font-size: 0.875rem;
+        font-weight: 500;
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        transition: all 0.2s;
+      }
+      .btn-pagination:hover:not(:disabled) {
+        background-color: #f3f4f6;
+        color: var(--text-primary);
+      }
+      .btn-pagination.active,
+      .btn-pagination:disabled {
+        background-color: #e5e7eb;
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
+
+      /* ========================================= */
+      /* --- DARK MODE TWEAKS FOR MEMBERS PAGE --- */
+      /* ========================================= */
+
+      /* Force Bootstrap cards/tables to adapt to Dark Mode */
+      [data-theme="dark"] .custom-card {
+        background-color: var(--card-bg) !important;
+      }
+      [data-theme="dark"] .table {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: var(--text-primary) !important;
+      }
+      [data-theme="dark"] .custom-table th,
+      [data-theme="dark"] .custom-table td {
+        background-color: transparent !important;
+        border-bottom-color: var(--border-color) !important;
+        color: var(--text-primary) !important;
+      }
+      [data-theme="dark"] .fw-semibold.text-dark-blue {
+        color: var(--text-primary) !important;
+      }
+
+      /* Member Avatars */
+      [data-theme="dark"] .member-avatar {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+      }
+
+      /* Brighten the tiny email/phone icons */
+      [data-theme="dark"] .contact-info-item i {
+        color: #cbd5e1;
+      }
+
+      /* Fix Dropdown Menu Hover visibility */
+      [data-theme="dark"] .dropdown-menu {
+        background-color: var(--card-bg) !important;
+        border: 1px solid var(--border-color) !important;
+      }
+      [data-theme="dark"] .dropdown-item {
+        color: var(--text-primary) !important;
+      }
+      [data-theme="dark"] .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+        color: white !important;
+      }
+
+      /* Fix Action Buttons (Three dots) */
+      [data-theme="dark"] .btn-link.text-muted {
+        color: #94a3b8 !important;
+      }
+      [data-theme="dark"] .btn-link.text-muted:hover {
+        color: #ffffff !important;
+      }
+
+      /* Pagination Buttons */
+      [data-theme="dark"] .btn-pagination:hover:not(:disabled) {
+        background-color: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+      }
+      [data-theme="dark"] .btn-pagination.active,
+      [data-theme="dark"] .btn-pagination:disabled {
+        background-color: rgba(255, 255, 255, 0.03);
+        color: #475569;
+      }
+
+      /* Mobile adjustments */
+      @media (max-width: 575.98px) {
+        .stretch-card {
+          min-height: auto;
+        } /* Turn off stretching on mobile so it scrolls naturally */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container d-flex">
+      <div class="sidebar-overlay"></div>
+
+      <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="sidebar-brand d-flex align-items-center">
+          <div class="brand-icon me-3">
+            <img
+              src="assets/images/logo.png"
+              alt="Haven of Praise Logo"
+              onerror="
+                this.src = 'https://placehold.co/40x40/111827/fbbf24?text=HoP'
+              "
+            />
+          </div>
+          <div class="brand-text">
+            <h6 class="mb-0 text-white fw-bold">Haven of Praise</h6>
+            <small class="text-muted-sidebar">Management System</small>
+          </div>
+        </div>
+
+        <button class="sidebar-collapse-btn d-none d-lg-flex" id="collapseBtn">
+          <i class="bi bi-chevron-left transition-icon"></i>
+        </button>
+
+        <ul class="nav flex-column sidebar-nav mt-4 flex-grow-1">
+          <li class="nav-item">
+            <a class="nav-link" href="dashboard-page.html">
+              <i class="bi bi-grid-1x2"></i
+              ><span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="attendance-page.html">
+              <i class="bi bi-people"></i
+              ><span class="nav-text">Attendance</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="inventory-page.html">
+              <i class="bi bi-box-seam"></i
+              ><span class="nav-text">Inventory</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="calendar-page.html">
+              <i class="bi bi-calendar4"></i
+              ><span class="nav-text">Calendar</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="members-page.html">
+              <i class="bi bi-person-badge"></i
+              ><span class="nav-text">Members</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reports-page.html">
+              <i class="bi bi-bar-chart"></i
+              ><span class="nav-text">Reports</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="activity-log-page.html">
+              <i class="bi bi-clock-history"></i
+              ><span class="nav-text">Activity Log</span>
+            </a>
+          </li>
+          <li class="nav-item mt-2 border-top border-secondary pt-2">
+            <a class="nav-link" href="settings-page.html">
+              <i class="bi bi-gear"></i><span class="nav-text">Settings</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-danger-hover" href="login-page.html">
+              <i class="bi bi-box-arrow-right"></i>
+              <span class="nav-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-user d-flex align-items-center mt-auto">
+          <div class="user-avatar">AD</div>
+          <div class="ms-3 user-text">
+            <h6 class="mb-0 text-white fw-semibold fs-sm">Admin User</h6>
+            <small class="text-muted-sidebar fs-xs">System Administrator</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content flex-grow-1">
+        <header class="top-nav mb-5 pb-3">
+          <div class="d-flex align-items-center gap-3">
+            <button
+              class="btn d-lg-none p-0 border-0 fs-3 text-dark-blue"
+              id="mobileMenuBtn"
+            >
+              <i class="bi bi-list"></i>
+            </button>
+            <h4 class="mb-0 fw-bold header-title fs-5">Members</h4>
+          </div>
+
+          <div class="d-flex align-items-center gap-4">
+            <div class="search-bar-container d-none d-sm-block">
+              <input
+                type="text"
+                class="form-control custom-search"
+                placeholder="Search anything..."
+              />
+            </div>
+
+            <button
+              class="btn btn-link text-dark-blue p-0 fs-5 d-flex align-items-center"
+              id="themeToggle"
+              title="Toggle Theme"
+            >
+              <i class="bi bi-moon-stars"></i>
+            </button>
+
+            <div class="notification-bell">
+              <i class="bi bi-bell"></i>
+              <span class="notification-dot"></span>
+            </div>
+          </div>
+        </header>
+
+        <div
+          class="d-flex justify-content-between align-items-start mb-5 flex-wrap gap-3"
+        >
+          <div>
+            <h2 class="h3 fw-bold mb-1 text-dark-blue">Member Directory</h2>
+            <p class="text-muted-custom mb-0 fs-sm">
+              Manage church members, roles, and ministries.
+            </p>
+          </div>
+          <div>
+            <button
+              class="btn btn-dark-blue fw-semibold px-4 py-2 rounded-3 shadow-sm d-flex align-items-center gap-2"
+              style="
+                background-color: var(--sidebar-active-text);
+                color: #111827;
+                border: none;
+                transition: filter 0.2s;
+              "
+              onmouseover="this.style.filter = 'brightness(0.9)'"
+              onmouseout="this.style.filter = 'none'"
+            >
+              <i class="bi bi-person-plus"></i> Add Member
+            </button>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+          <div class="col-6 col-md-3">
+            <div class="stats-label">Total Members</div>
+            <div class="stats-value">482</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stats-label">New This Month</div>
+            <div class="stats-value text-success">+12</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stats-label">Active Ministries</div>
+            <div class="stats-value">8</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stats-label">Volunteers</div>
+            <div class="stats-value">156</div>
+          </div>
+        </div>
+
+        <div class="card custom-card">
+          <div class="card-body p-4 p-md-5 d-flex flex-column stretch-card">
+            <div
+              class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3"
+            >
+              <div class="flex-grow-1" style="max-width: 400px">
+                <input
+                  type="text"
+                  class="form-control border-0 shadow-none px-0 fs-sm custom-search bg-transparent"
+                  placeholder="Search members by name, email, or phone..."
+                  style="
+                    border-bottom: 1px solid var(--border-color) !important;
+                    border-radius: 0;
+                    box-shadow: none;
+                  "
+                />
+              </div>
+              <div class="d-flex align-items-center gap-4">
+                <div class="dropdown">
+                  <button
+                    class="btn btn-link text-dark-blue text-decoration-none fw-medium p-0 d-flex align-items-center gap-2"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    All Ministries <i class="bi bi-chevron-down fs-xs"></i>
+                  </button>
+                  <ul class="dropdown-menu border-0 shadow-sm rounded-3">
+                    <li>
+                      <a class="dropdown-item fs-sm text-dark-blue" href="#"
+                        >Worship</a
+                      >
+                    </li>
+                    <li>
+                      <a class="dropdown-item fs-sm text-dark-blue" href="#"
+                        >Children</a
+                      >
+                    </li>
+                    <li>
+                      <a class="dropdown-item fs-sm text-dark-blue" href="#"
+                        >Youth</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <button
+                  class="btn btn-link text-dark-blue text-decoration-none fw-medium p-0 d-flex align-items-center gap-2"
+                >
+                  <i class="bi bi-funnel"></i> Filter
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive mt-2 flex-grow-1">
+              <table class="table custom-table members-table align-middle">
+                <thead>
+                  <tr>
+                    <th>Member</th>
+                    <th>Contact</th>
+                    <th>Ministry<br />& Role</th>
+                    <th>Join<br />Date</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="member-avatar">Jd</div>
+                        <div>
+                          <span
+                            class="fw-semibold text-dark-blue d-block fs-sm"
+                            style="max-width: 80px"
+                            >Juan dela Cruz</span
+                          >
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="contact-info-item">
+                        <i class="bi bi-envelope"></i> juan@example.com
+                      </div>
+                      <div class="contact-info-item mb-0">
+                        <i class="bi bi-telephone"></i> 0912-345-6789
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-bold text-dark-blue d-block fs-sm"
+                        >Worship</span
+                      >
+                      <span class="text-muted-custom fs-xs">Leader</span>
+                    </td>
+                    <td>
+                      <span class="text-muted-custom d-block fs-sm">Jan</span>
+                      <span class="text-muted-custom d-block fs-sm">2020</span>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-success fs-sm">Active</span>
+                    </td>
+                    <td class="text-end">
+                      <button class="btn btn-link text-muted p-0">
+                        <i class="bi bi-three-dots"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="member-avatar">MS</div>
+                        <div>
+                          <span
+                            class="fw-semibold text-dark-blue d-block fs-sm"
+                            style="max-width: 80px"
+                            >Maria Santos</span
+                          >
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="contact-info-item">
+                        <i class="bi bi-envelope"></i> maria@example.com
+                      </div>
+                      <div class="contact-info-item mb-0">
+                        <i class="bi bi-telephone"></i> 0923-456-7890
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-bold text-dark-blue d-block fs-sm"
+                        >Children</span
+                      >
+                      <span class="text-muted-custom fs-xs">Teacher</span>
+                    </td>
+                    <td>
+                      <span class="text-muted-custom d-block fs-sm">Mar</span>
+                      <span class="text-muted-custom d-block fs-sm">2021</span>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-success fs-sm">Active</span>
+                    </td>
+                    <td class="text-end">
+                      <button class="btn btn-link text-muted p-0">
+                        <i class="bi bi-three-dots"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="member-avatar">PR</div>
+                        <div>
+                          <span
+                            class="fw-semibold text-dark-blue d-block fs-sm"
+                            style="max-width: 80px"
+                            >Pedro Reyes</span
+                          >
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="contact-info-item">
+                        <i class="bi bi-envelope"></i> pedro@example.com
+                      </div>
+                      <div class="contact-info-item mb-0">
+                        <i class="bi bi-telephone"></i> 0934-567-8901
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-bold text-dark-blue d-block fs-sm"
+                        >Ushering</span
+                      >
+                      <span class="text-muted-custom fs-xs">Member</span>
+                    </td>
+                    <td>
+                      <span class="text-muted-custom d-block fs-sm">Jun</span>
+                      <span class="text-muted-custom d-block fs-sm">2022</span>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-success fs-sm">Active</span>
+                    </td>
+                    <td class="text-end">
+                      <button class="btn btn-link text-muted p-0">
+                        <i class="bi bi-three-dots"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="member-avatar">AL</div>
+                        <div>
+                          <span
+                            class="fw-semibold text-dark-blue d-block fs-sm"
+                            style="max-width: 80px"
+                            >Ana Lim</span
+                          >
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="contact-info-item">
+                        <i class="bi bi-envelope"></i> ana@example.com
+                      </div>
+                      <div class="contact-info-item mb-0">
+                        <i class="bi bi-telephone"></i> 0945-678-9012
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-bold text-dark-blue d-block fs-sm"
+                        >Media</span
+                      >
+                      <span class="text-muted-custom fs-xs">Volunteer</span>
+                    </td>
+                    <td>
+                      <span class="text-muted-custom d-block fs-sm">Feb</span>
+                      <span class="text-muted-custom d-block fs-sm">2023</span>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-success fs-sm">Active</span>
+                    </td>
+                    <td class="text-end">
+                      <button class="btn btn-link text-muted p-0">
+                        <i class="bi bi-three-dots"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="member-avatar">MB</div>
+                        <div>
+                          <span
+                            class="fw-semibold text-dark-blue d-block fs-sm"
+                            style="max-width: 80px"
+                            >Mark Bautista</span
+                          >
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="contact-info-item">
+                        <i class="bi bi-envelope"></i> mark@example.com
+                      </div>
+                      <div class="contact-info-item mb-0">
+                        <i class="bi bi-telephone"></i> 0956-789-0123
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-bold text-dark-blue d-block fs-sm"
+                        >Youth</span
+                      >
+                      <span class="text-muted-custom fs-xs">Member</span>
+                    </td>
+                    <td>
+                      <span class="text-muted-custom d-block fs-sm">Aug</span>
+                      <span class="text-muted-custom d-block fs-sm">2023</span>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-dark-blue fs-sm">New</span>
+                    </td>
+                    <td class="text-end">
+                      <button class="btn btn-link text-muted p-0">
+                        <i class="bi bi-three-dots"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="member-avatar">SG</div>
+                        <div>
+                          <span
+                            class="fw-semibold text-dark-blue d-block fs-sm"
+                            style="max-width: 80px"
+                            >Sarah Geronimo</span
+                          >
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="contact-info-item">
+                        <i class="bi bi-envelope"></i> sarah@example.com
+                      </div>
+                      <div class="contact-info-item mb-0">
+                        <i class="bi bi-telephone"></i> 0967-890-1234
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-bold text-dark-blue d-block fs-sm"
+                        >Worship</span
+                      >
+                      <span class="text-muted-custom fs-xs">Member</span>
+                    </td>
+                    <td>
+                      <span class="text-muted-custom d-block fs-sm">Nov</span>
+                      <span class="text-muted-custom d-block fs-sm">2021</span>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-success fs-sm">Active</span>
+                    </td>
+                    <td class="text-end">
+                      <button class="btn btn-link text-muted p-0">
+                        <i class="bi bi-three-dots"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              class="pagination-container d-flex justify-content-between align-items-center flex-wrap gap-3 mt-auto"
+            >
+              <span class="text-muted-custom fs-sm"
+                >Showing 1 to 6 of 482 members</span
+              >
+              <div class="d-flex gap-2">
+                <button class="btn-pagination active" disabled>Prev</button>
+                <button class="btn-pagination">Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Haven of Praise - Activity Log</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+
+    <style>
+      /* --- Action Text Colors --- */
+      .action-update {
+        color: var(--accent-blue);
+        font-weight: 600;
+      }
+      .action-create {
+        color: var(--success-color);
+        font-weight: 600;
+      }
+      .action-delete {
+        color: #ef4444;
+        font-weight: 600;
+      }
+      .action-neutral {
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      /* --- Stretch Card & Padding Fix (Matches other pages) --- */
+      .stretch-card {
+        min-height: calc(100vh - 280px);
+      }
+      .activity-table td {
+        vertical-align: top;
+        padding: 1.5rem 0.5rem !important; /* Increased padding for spacious look */
+      }
+
+      /* Table Column Widths */
+      .col-timestamp {
+        width: 20%;
+        min-width: 160px;
+      }
+      .col-user {
+        width: 15%;
+        min-width: 100px;
+      }
+      .col-action {
+        width: 12%;
+      }
+      .col-module {
+        width: 15%;
+      }
+      .col-details {
+        width: 38%;
+      }
+
+      /* Details truncation & User wrapping */
+      .details-text {
+        display: block;
+        max-width: 300px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .user-wrap {
+        display: block;
+        max-width: 80px;
+        line-height: 1.4;
+      }
+
+      /* --- Toolbar Controls --- */
+      .toolbar-input {
+        border: none;
+        background-color: transparent !important;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        box-shadow: none;
+      }
+      .toolbar-input:focus {
+        box-shadow: none;
+        outline: none;
+      }
+
+      /* Custom Select arrow */
+      .custom-select-minimal {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right center;
+        padding-right: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* --- Pagination --- */
+      .pagination-container {
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.5rem;
+        margin-top: 1rem;
+      }
+      .btn-pagination {
+        font-size: 0.875rem;
+        font-weight: 500;
+        padding: 0.4rem 1.25rem;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        transition: all 0.2s;
+      }
+      .btn-pagination.active {
+        background-color: #8c8c8c;
+        color: #ffffff;
+      }
+      .btn-pagination:not(.active):hover {
+        background-color: #f3f4f6;
+        color: var(--text-primary);
+      }
+
+      /* ========================================= */
+      /* --- DARK MODE TWEAKS FOR ACTIVITY LOG --- */
+      /* ========================================= */
+
+      /* Force Bootstrap cards/tables to adapt to Dark Mode */
+      [data-theme="dark"] .custom-card {
+        background-color: var(--card-bg) !important;
+      }
+      [data-theme="dark"] .table {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: var(--text-primary) !important;
+      }
+      [data-theme="dark"] .custom-table th,
+      [data-theme="dark"] .custom-table td {
+        background-color: transparent !important;
+        border-bottom-color: var(--border-color) !important;
+        color: var(--text-primary) !important;
+      }
+
+      /* Brighten action colors for dark mode visibility */
+      [data-theme="dark"] .action-update {
+        color: #60a5fa !important;
+      } /* Lighter blue */
+      [data-theme="dark"] .action-delete {
+        color: #f87171 !important;
+      } /* Lighter red */
+      [data-theme="dark"] .action-neutral {
+        color: #cbd5e1 !important;
+      } /* Lighter gray */
+
+      /* Toolbar & Selectors in Dark Mode FIXES */
+      [data-theme="dark"] .toolbar-input {
+        background-color: transparent !important;
+        color: var(--text-primary) !important;
+      }
+      [data-theme="dark"] .toolbar-input::placeholder {
+        color: #94a3b8 !important; /* Brightens placeholder text */
+        opacity: 1;
+      }
+
+      /* FIX: Stop Chrome autofill from making the search input white in dark mode */
+      [data-theme="dark"] .toolbar-input:-webkit-autofill,
+      [data-theme="dark"] .toolbar-input:-webkit-autofill:hover,
+      [data-theme="dark"] .toolbar-input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 30px var(--card-bg) inset !important;
+        -webkit-text-fill-color: var(--text-primary) !important;
+      }
+
+      [data-theme="dark"] .custom-select-minimal {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23cbd5e1' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+      }
+      [data-theme="dark"] select.toolbar-input option {
+        background-color: var(
+          --card-bg
+        ); /* Fixes dropdown options being unreadable */
+        color: var(--text-primary);
+      }
+      [data-theme="dark"] .bi-calendar3 {
+        color: #94a3b8 !important; /* Brightens the calendar icon */
+      }
+
+      /* Export Button Dark Mode */
+      [data-theme="dark"] .btn.bg-white {
+        background-color: var(--card-bg) !important;
+        border-color: var(--border-color) !important;
+        color: var(--text-primary) !important;
+      }
+      [data-theme="dark"] .btn.bg-white:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+      }
+
+      /* Pagination Dark Mode */
+      [data-theme="dark"] .btn-pagination:not(.active):hover {
+        background-color: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+      }
+      [data-theme="dark"] .btn-pagination.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+      }
+
+      /* Mobile adjustments */
+      @media (max-width: 575.98px) {
+        .stretch-card {
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container d-flex">
+      <div class="sidebar-overlay"></div>
+
+      <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="sidebar-brand d-flex align-items-center">
+          <div class="brand-icon me-3">
+            <img
+              src="assets/images/logo.png"
+              alt="Haven of Praise Logo"
+              onerror="
+                this.src = 'https://placehold.co/40x40/111827/fbbf24?text=HoP'
+              "
+            />
+          </div>
+          <div class="brand-text">
+            <h6 class="mb-0 text-white fw-bold">Haven of Praise</h6>
+            <small class="text-muted-sidebar">Management System</small>
+          </div>
+        </div>
+
+        <button class="sidebar-collapse-btn d-none d-lg-flex" id="collapseBtn">
+          <i class="bi bi-chevron-left transition-icon"></i>
+        </button>
+
+        <ul class="nav flex-column sidebar-nav mt-4 flex-grow-1">
+          <li class="nav-item">
+            <a class="nav-link" href="dashboard-page.html">
+              <i class="bi bi-grid-1x2"></i
+              ><span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="attendance-page.html">
+              <i class="bi bi-people"></i
+              ><span class="nav-text">Attendance</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="inventory-page.html">
+              <i class="bi bi-box-seam"></i
+              ><span class="nav-text">Inventory</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="calendar-page.html">
+              <i class="bi bi-calendar4"></i
+              ><span class="nav-text">Calendar</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="members-page.html">
+              <i class="bi bi-person-badge"></i
+              ><span class="nav-text">Members</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reports-page.html">
+              <i class="bi bi-bar-chart"></i
+              ><span class="nav-text">Reports</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="activity-log-page.html">
+              <i class="bi bi-clock-history"></i
+              ><span class="nav-text">Activity Log</span>
+            </a>
+          </li>
+          <li class="nav-item mt-2 border-top border-secondary pt-2">
+            <a class="nav-link" href="settings-page.html">
+              <i class="bi bi-gear"></i><span class="nav-text">Settings</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-danger-hover" href="login-page.html">
+              <i class="bi bi-box-arrow-right"></i>
+              <span class="nav-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-user d-flex align-items-center mt-auto">
+          <div class="user-avatar">AD</div>
+          <div class="ms-3 user-text">
+            <h6 class="mb-0 text-white fw-semibold fs-sm">Admin User</h6>
+            <small class="text-muted-sidebar fs-xs">System Administrator</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content flex-grow-1">
+        <header class="top-nav mb-5 pb-3">
+          <div class="d-flex align-items-center gap-3">
+            <button
+              class="btn d-lg-none p-0 border-0 fs-3 text-dark-blue"
+              id="mobileMenuBtn"
+            >
+              <i class="bi bi-list"></i>
+            </button>
+            <h4 class="mb-0 fw-bold header-title fs-5">Activity</h4>
+          </div>
+
+          <div class="d-flex align-items-center gap-4">
+            <div class="search-bar-container d-none d-sm-block">
+              <input
+                type="text"
+                class="form-control custom-search"
+                placeholder="Search anything..."
+              />
+            </div>
+
+            <button
+              class="btn btn-link text-dark-blue p-0 fs-5 d-flex align-items-center"
+              id="themeToggle"
+              title="Toggle Theme"
+            >
+              <i class="bi bi-moon-stars"></i>
+            </button>
+
+            <div class="notification-bell">
+              <i class="bi bi-bell"></i>
+              <span class="notification-dot"></span>
+            </div>
+          </div>
+        </header>
+
+        <div
+          class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3"
+        >
+          <div>
+            <h2 class="h3 fw-bold mb-1 text-dark-blue">System Activity Log</h2>
+            <p class="text-muted-custom mb-0 fs-sm">
+              Audit trail of all system actions and changes.
+            </p>
+          </div>
+          <div>
+            <button
+              class="btn bg-white fw-semibold px-4 py-2 rounded-3 shadow-sm d-flex align-items-center gap-2 border text-dark-blue"
+            >
+              <i class="bi bi-download"></i> Export Logs
+            </button>
+          </div>
+        </div>
+
+        <div class="card custom-card mt-4">
+          <div class="card-body p-4 p-md-5 d-flex flex-column stretch-card">
+            <div
+              class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-4 border-bottom pb-4"
+              style="border-color: var(--border-color) !important"
+            >
+              <div class="flex-grow-1" style="max-width: 400px">
+                <input
+                  type="text"
+                  class="form-control toolbar-input px-0"
+                  placeholder="Search logs by user, action, or module..."
+                  autocomplete="off"
+                />
+              </div>
+              <div class="d-flex align-items-center gap-5">
+                <select
+                  class="form-control toolbar-input custom-select-minimal w-auto"
+                >
+                  <option>All Actions</option>
+                  <option>Create</option>
+                  <option>Update</option>
+                  <option>Delete</option>
+                </select>
+                <div class="d-flex align-items-center gap-2 text-muted-custom">
+                  <input
+                    type="text"
+                    class="form-control toolbar-input w-auto px-0"
+                    placeholder="mm/dd/yyyy"
+                    style="max-width: 90px"
+                  />
+                  <i class="bi bi-calendar3"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-responsive flex-grow-1">
+              <table class="table custom-table activity-table align-middle">
+                <thead>
+                  <tr>
+                    <th class="col-timestamp">Timestamp</th>
+                    <th class="col-user">User</th>
+                    <th class="col-action">Action</th>
+                    <th class="col-module">Module</th>
+                    <th class="col-details">Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div
+                        class="d-flex align-items-center gap-2 text-muted-custom fs-sm"
+                      >
+                        <i class="bi bi-clock"></i> Oct 15, 2023 14:30:22
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-dark-blue fs-sm user-wrap"
+                        >Admin User</span
+                      >
+                    </td>
+                    <td><span class="action-update fs-sm">Update</span></td>
+                    <td class="text-muted-custom fs-sm">Settings</td>
+                    <td>
+                      <span class="text-muted-custom fs-sm details-text"
+                        >Changed 2FA requirement for all staff members</span
+                      >
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div
+                        class="d-flex align-items-center gap-2 text-muted-custom fs-sm"
+                      >
+                        <i class="bi bi-clock"></i> Oct 15, 2023 11:15:05
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-dark-blue fs-sm user-wrap"
+                        >Juan dela Cruz</span
+                      >
+                    </td>
+                    <td><span class="action-create fs-sm">Create</span></td>
+                    <td class="text-muted-custom fs-sm">Inventory</td>
+                    <td>
+                      <span class="text-muted-custom fs-sm details-text"
+                        >Added new item: Yamaha Digital Mixer</span
+                      >
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div
+                        class="d-flex align-items-center gap-2 text-muted-custom fs-sm"
+                      >
+                        <i class="bi bi-clock"></i> Oct 15, 2023 09:05:12
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-dark-blue fs-sm user-wrap"
+                        >System</span
+                      >
+                    </td>
+                    <td><span class="action-neutral fs-sm">Login</span></td>
+                    <td class="text-muted-custom fs-sm">Auth</td>
+                    <td>
+                      <span class="text-muted-custom fs-sm details-text"
+                        >Successful login from IP 192.168.1.45</span
+                      >
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div
+                        class="d-flex align-items-center gap-2 text-muted-custom fs-sm"
+                      >
+                        <i class="bi bi-clock"></i> Oct 14, 2023 16:45:30
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-dark-blue fs-sm user-wrap"
+                        >Maria Santos</span
+                      >
+                    </td>
+                    <td><span class="action-update fs-sm">Update</span></td>
+                    <td class="text-muted-custom fs-sm">Calendar</td>
+                    <td>
+                      <span class="text-muted-custom fs-sm details-text"
+                        >Modified time for Youth Fellowship event</span
+                      >
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div
+                        class="d-flex align-items-center gap-2 text-muted-custom fs-sm"
+                      >
+                        <i class="bi bi-clock"></i> Oct 14, 2023 10:20:15
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-dark-blue fs-sm user-wrap"
+                        >Admin User</span
+                      >
+                    </td>
+                    <td><span class="action-delete fs-sm">Delete</span></td>
+                    <td class="text-muted-custom fs-sm">Members</td>
+                    <td>
+                      <span class="text-muted-custom fs-sm details-text"
+                        >Removed duplicate record for Mark B.</span
+                      >
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div
+                        class="d-flex align-items-center gap-2 text-muted-custom fs-sm"
+                      >
+                        <i class="bi bi-clock"></i> Oct 13, 2023 15:10:00
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-dark-blue fs-sm user-wrap"
+                        >Pedro Reyes</span
+                      >
+                    </td>
+                    <td><span class="action-create fs-sm">Create</span></td>
+                    <td class="text-muted-custom fs-sm">Members</td>
+                    <td>
+                      <span class="text-muted-custom fs-sm details-text"
+                        >Registered new member: Michael Torres</span
+                      >
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div
+                        class="d-flex align-items-center gap-2 text-muted-custom fs-sm"
+                      >
+                        <i class="bi bi-clock"></i> Oct 13, 2023 08:30:45
+                      </div>
+                    </td>
+                    <td>
+                      <span class="fw-semibold text-dark-blue fs-sm user-wrap"
+                        >System</span
+                      >
+                    </td>
+                    <td><span class="action-neutral fs-sm">Export</span></td>
+                    <td class="text-muted-custom fs-sm">Reports</td>
+                    <td>
+                      <span class="text-muted-custom fs-sm details-text"
+                        >Generated Weekly Attendance Report for Oct 6-12</span
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              class="pagination-container d-flex justify-content-between align-items-center flex-wrap gap-3 mt-auto"
+            >
+              <span class="text-muted-custom fs-sm">Showing 7 recent logs</span>
+              <div class="d-flex gap-2">
+                <button class="btn-pagination active">Prev</button>
+                <button class="btn-pagination">Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
