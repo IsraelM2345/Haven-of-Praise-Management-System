@@ -1,8 +1,10 @@
 /* ========================================= */
-/*           BASE STYLES & LAYOUT            */
+/* BASE STYLES & LAYOUT            */
 /* ========================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap");
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Playfair Display", serif;
   background-color: var(--main-bg);
   color: var(--text-primary);
   margin: 0;
@@ -238,7 +240,9 @@ body {
   transition: opacity 0.3s ease;
 }
 
-/* Responsive Rules for Layout */
+/* ========================================= */
+/* Responsive Rules for Layout               */
+/* ========================================= */
 @media (max-width: 991.98px) {
   body {
     padding-left: 0;
@@ -256,10 +260,19 @@ body {
   .sidebar.show {
     left: 0;
   }
+
+  /* --- GLOBALLY APPLIED ARROW FIX --- */
+  /* Hide the arrow by default on mobile so it doesn't peek out */
   .sidebar-collapse-btn {
     display: none !important;
   }
+
+  /* Show the arrow ONLY when the sidebar is open on mobile */
+  .sidebar.show .sidebar-collapse-btn {
+    display: flex !important;
+  }
 }
+
 @media (max-width: 575.98px) {
   .main-content {
     padding: 1.25rem;

@@ -77,6 +77,18 @@
   background-color: #e5ab20;
   color: #111827;
 }
+
+.btn-brown {
+  background-color: var(--sidebar-active-text);
+  color: #111827;
+  border: none;
+}
+
+.btn-brown:hover {
+  background-color: #b59d83dc;
+  color: #111827;
+}
+
 .btn-report {
   background-color: var(--card-bg);
   color: var(--text-primary);
@@ -314,6 +326,95 @@
 }
 
 /* ========================================= */
+/* NOTIFICATION DROPDOWN                     */
+/* ========================================= */
+
+.custom-notification-menu {
+  width: 340px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 0;
+  margin-top: 15px !important;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Sticky Header and Footer inside the dropdown */
+.notif-header,
+.notif-footer {
+  position: sticky;
+  z-index: 10;
+  background-color: #f8fafc;
+}
+.notif-header {
+  top: 0;
+}
+.notif-footer {
+  bottom: 0;
+}
+
+.notification-item {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  white-space: normal; /* Allows text to wrap */
+  transition: background-color 0.2s ease;
+}
+.notification-item:last-child {
+  border-bottom: none;
+}
+.notification-item:hover {
+  background-color: rgba(30, 58, 138, 0.03);
+}
+
+/* Unread State */
+.notification-item.unread {
+  background-color: rgba(30, 58, 138, 0.04); /* Faint blue for unread */
+}
+.notification-item.unread:hover {
+  background-color: rgba(30, 58, 138, 0.08);
+}
+
+/* Notification Icons */
+.notif-icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+
+/* Dark Mode Overrides for Notifications */
+[data-theme="dark"] .custom-notification-menu {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+[data-theme="dark"] .notif-header,
+[data-theme="dark"] .notif-footer {
+  background-color: var(--card-bg);
+}
+[data-theme="dark"] .notification-item {
+  border-bottom-color: var(--border-color);
+}
+[data-theme="dark"] .notification-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+[data-theme="dark"] .notification-item.unread {
+  background-color: rgba(96, 165, 250, 0.08); /* Faint blue in dark mode */
+}
+[data-theme="dark"] .notification-item.unread:hover {
+  background-color: rgba(96, 165, 250, 0.12);
+}
+[data-theme="dark"] .notif-icon-circle.bg-light {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ========================================= */
 /* 4. DARK MODE OVERRIDES                    */
 /* ========================================= */
 [data-theme="dark"] .icon-box {
@@ -356,4 +457,34 @@
 }
 [data-theme="dark"] .btn-link.text-muted:hover {
   color: #ffffff !important;
+}
+
+/* ========================================= */
+/* LOGOUT MODAL STYLES (GLOBAL)              */
+/* ========================================= */
+
+[data-theme="dark"] .modal-content {
+  background-color: var(--card-bg);
+}
+[data-theme="dark"] .modal-header .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Custom Cancel Button (Fixed Background) */
+.btn-cancel-custom {
+  background-color: #e5e7eb !important; /* Visible light gray */
+  color: #374151 !important; /* Dark text */
+  border: none;
+  transition: all 0.2s ease;
+}
+.btn-cancel-custom:hover {
+  background-color: #d1d5db !important;
+}
+
+[data-theme="dark"] .btn-cancel-custom {
+  background-color: #334155 !important; /* Visible dark slate */
+  color: #f8fafc !important; /* White text */
+}
+[data-theme="dark"] .btn-cancel-custom:hover {
+  background-color: #475569 !important;
 }
