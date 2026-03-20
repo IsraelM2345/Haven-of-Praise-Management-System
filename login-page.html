@@ -6,10 +6,6 @@
     <title>Haven of Praise - Login</title>
 
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
@@ -18,92 +14,110 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
     />
 
+    <link rel="stylesheet" href="css/layout.css" />
+
     <style>
-      /* --- LOGIN PAGE SPECIFIC STYLES --- */
+      /* --- GLOBAL STYLES & NATIVE SCROLL FIX --- */
+      /* The Magic Trick: Paints the absolute back of the browser dark to hide the white over-scroll flash */
+      html {
+        background-color: #1a1e26;
+      }
+
       body.login-body {
-        font-family: "Inter", sans-serif;
+        font-family: "Playfair Display", serif;
         margin: 0;
         min-height: 100vh;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 2rem 1rem; /* Breathing room top and bottom */
+        background-color: transparent;
+        transition: background-color 0.3s ease;
+        /* Notice: NO overflow: hidden or position: fixed here! Native scrolling is active. */
+      }
+
+      /* Locked Background Layer (Stays glued to the screen) */
+      .fixed-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background-image: url("assets/images/bg2.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        position: relative;
-        overflow: hidden;
+        z-index: -2;
       }
 
       /* Dark Geometric Overlays */
       .bg-overlay {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
         background-color: rgba(255, 255, 255, 0.1);
-        z-index: 1;
+        z-index: -1;
       }
       .shape-bottom-left {
-        position: absolute;
+        position: fixed;
         bottom: 0;
         left: 0;
         width: 40vw;
         height: 60vh;
-        background-color: rgba(30, 41, 59, 0.85); /* Dark Slate color */
+        background-color: rgba(30, 41, 59, 0.85);
         clip-path: polygon(0 40%, 0 100%, 100% 100%);
-        z-index: 2;
+        z-index: 0;
       }
       .shape-top-right {
-        position: absolute;
+        position: fixed;
         top: 0;
         right: 0;
         width: 35vw;
         height: 70vh;
         background-color: rgba(30, 41, 59, 0.85);
         clip-path: polygon(100% 0, 0 0, 100% 70%);
-        z-index: 2;
+        z-index: 0;
       }
 
-      /* Main Login Card Wrapper */
+      /* Main Login Card Wrapper (Mobile First) */
       .login-wrapper {
         position: relative;
         z-index: 10;
         display: flex;
+        flex-direction: column;
         width: 100%;
-        max-width: 880px;
-        min-height: 520px;
-        background-color: #f4f2ec; /* Light beige right-side background */
+        max-width: 500px;
+        margin: auto; /* Centers perfectly, but allows native body scrolling if it overflows! */
+        background-color: #f4f2ec;
         border-radius: 24px;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+        transition: background-color 0.3s ease;
+        /* Notice: NO overflow-y: auto here! The container itself does not scroll. */
       }
 
-      /* Left Panel (Tan/Gold with the curve) */
+      /* Top Panel on Mobile / Left Panel on Desktop */
       .login-left {
-        width: 45%;
         background-color: #b59d83;
-        border-radius: 24px 130px 130px 24px;
-        padding: 3rem;
+        border-radius: 24px 24px 0 0;
+        padding: 3rem 2rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         text-align: center;
         color: white;
-        box-shadow: 10px 0 20px rgba(0, 0, 0, 0.05);
         z-index: 2;
       }
 
-      /* Right Panel (Form) */
+      /* Bottom Panel on Mobile / Right Panel on Desktop */
       .login-right {
-        width: 55%;
-        padding: 3.5rem 4.5rem;
+        padding: 3rem 2rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
         z-index: 1;
-        text-align: left; /* Forces proper left alignment */
+        text-align: left;
+        border-radius: 0 0 24px 24px;
       }
 
       /* Text & Colors */
@@ -111,20 +125,20 @@
         color: #1e2b3c !important;
       }
       .fs-xs {
-        font-size: 0.75rem;
+        font-size: 0.85rem;
       }
 
       /* Buttons */
       .btn-register {
         background-color: #1e2b3c;
         color: white;
-        border: 2px solid white;
-        padding: 0.6rem 2.5rem;
+        padding: 0.75rem 2.5rem;
         border-radius: 8px;
         font-weight: 600;
         transition: 0.3s;
         text-decoration: none;
         display: inline-block;
+        font-size: 1rem;
       }
       .btn-register:hover {
         background-color: white;
@@ -134,12 +148,13 @@
       .btn-signin {
         background-color: #1e2b3c;
         color: white;
-        padding: 0.75rem;
+        padding: 0.875rem;
         border-radius: 8px;
         font-weight: 600;
         width: 100%;
         border: none;
         transition: 0.3s;
+        font-size: 1rem;
       }
       .btn-signin:hover {
         background-color: #0f172a;
@@ -147,64 +162,56 @@
 
       /* Form Inputs & Labels */
       .form-label {
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: #4b5563;
-        margin-bottom: 0.4rem;
-        text-align: left;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
         display: block;
       }
 
       .custom-input-group {
-        border-radius: 6px;
-        background-color: #ffffff; /* Force container background to white */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
         display: flex;
         align-items: center;
-        border: 1px solid transparent;
-        transition: border-color 0.2s;
+        border: 1.5px solid #e5e7eb;
+        transition: all 0.2s ease;
       }
       .custom-input-group:focus-within {
-        border-color: rgba(30, 58, 138, 0.3);
+        border-color: #1e2b3c;
+        box-shadow: 0 0 0 3px rgba(30, 43, 60, 0.1);
       }
 
-      .custom-input-group .form-control,
-      .custom-input-group .form-select {
+      .custom-input-group .form-control {
         border: none;
         background-color: transparent;
-        padding: 0.8rem 1rem;
-        font-size: 0.85rem;
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
         color: #1e2b3c;
         font-weight: 500;
-        box-shadow: none; /* Removes bootstrap blue glow */
+        box-shadow: none;
       }
-
       .custom-input-group .form-control::placeholder {
         color: #9ca3af;
         font-weight: 400;
       }
-
       .custom-input-group .input-group-text {
         background-color: transparent;
         border: none;
-        color: #1e2b3c;
+        color: #6b7280;
         padding-right: 1.2rem;
+        font-size: 1.1rem;
       }
-
-      /* KILLS THE SKY BLUE AUTOFILL BUG IN BROWSERS */
-      .custom-input-group .form-control:-webkit-autofill,
-      .custom-input-group .form-control:-webkit-autofill:hover,
-      .custom-input-group .form-control:-webkit-autofill:focus,
-      .custom-input-group .form-select:-webkit-autofill {
+      .custom-input-group .form-control:-webkit-autofill {
         -webkit-box-shadow: 0 0 0 30px white inset !important;
         -webkit-text-fill-color: #1e2b3c !important;
         transition: background-color 5000s ease-in-out 0s;
       }
 
-      /* Links & Checkbox */
       .form-check-label,
       .forgot-link {
-        font-size: 0.7rem;
+        font-size: 0.875rem;
         font-weight: 500;
         color: #4b5563;
       }
@@ -217,90 +224,167 @@
         text-decoration: underline;
       }
 
-      /* Password Toggle Eye Icon */
       #togglePassword {
         cursor: pointer;
-        color: #6b7280;
         transition: color 0.2s;
       }
       #togglePassword:hover {
         color: #1e2b3c;
       }
 
-      /* Responsive Rules */
-      @media (max-width: 991px) {
+      /* DARK MODE OVERRIDES */
+      [data-bs-theme="dark"] html {
+        background-color: #0f172a;
+      } /* Darker root for dark mode */
+      [data-bs-theme="dark"] .bg-overlay {
+        background-color: rgba(15, 23, 42, 0.6);
+      }
+      [data-bs-theme="dark"] .login-wrapper {
+        background-color: #1e293b;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      }
+      [data-bs-theme="dark"] .text-dark-blue {
+        color: #f8fafc !important;
+      }
+      [data-bs-theme="dark"] .text-muted {
+        color: #94a3b8 !important;
+      }
+      [data-bs-theme="dark"] .custom-input-group {
+        background-color: #0f172a;
+        border-color: #334155;
+      }
+      [data-bs-theme="dark"] .custom-input-group:focus-within {
+        border-color: #b59d83;
+        box-shadow: 0 0 0 3px rgba(181, 157, 131, 0.2);
+      }
+      [data-bs-theme="dark"] .custom-input-group .form-control {
+        color: #f8fafc;
+      }
+      [data-bs-theme="dark"] .custom-input-group .form-control::placeholder {
+        color: #64748b;
+      }
+      [data-bs-theme="dark"] .form-label,
+      [data-bs-theme="dark"] .form-check-label,
+      [data-bs-theme="dark"] .forgot-link {
+        color: #cbd5e1;
+      }
+      [data-bs-theme="dark"] .btn-signin {
+        background-color: #b59d83;
+        color: #1e2b3c;
+      }
+      [data-bs-theme="dark"] .btn-signin:hover {
+        background-color: #d4bda4;
+      }
+      [data-bs-theme="dark"]
+        .custom-input-group
+        .form-control:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
+        -webkit-text-fill-color: #f8fafc !important;
+      }
+      [data-bs-theme="dark"] .modal-content {
+        background-color: #1e293b;
+      }
+      [data-bs-theme="dark"] .modal-content h4 {
+        color: #f8fafc !important;
+      }
+      [data-bs-theme="dark"] .modal-content .text-muted {
+        color: #cbd5e1 !important;
+      }
+
+      /* Desktop Layout Adjustments */
+      @media (min-width: 992px) {
         .login-wrapper {
-          flex-direction: column;
-          width: 90%;
-          max-width: 500px;
-          min-height: auto;
+          flex-direction: row;
+          max-width: 900px;
+          min-height: 520px;
         }
         .login-left {
-          width: 100%;
-          border-radius: 24px 24px 0 0;
-          padding: 3rem 2rem;
+          width: 45%;
+          border-radius: 24px 130px 130px 24px;
+          padding: 3.5rem 3rem;
+          box-shadow: 10px 0 20px rgba(0, 0, 0, 0.05);
         }
         .login-right {
-          width: 100%;
-          padding: 3rem 2rem;
+          width: 55%;
+          padding: 4rem 4.5rem;
+          border-radius: 0 24px 24px 0;
         }
       }
     </style>
   </head>
-  <body class="login-body">
+  <body class="login-body" data-bs-theme="light">
+    <div class="fixed-bg"></div>
     <div class="bg-overlay"></div>
     <div class="shape-bottom-left"></div>
     <div class="shape-top-right"></div>
 
+    <button
+      id="themeToggle"
+      class="btn btn-light rounded-circle position-fixed m-4 shadow d-flex align-items-center justify-content-center"
+      style="
+        top: 0;
+        right: 0;
+        z-index: 1000;
+        width: 45px;
+        height: 45px;
+        transition: 0.3s;
+      "
+    >
+      <i class="bi bi-moon-fill" style="font-size: 1.2rem"></i>
+    </button>
+
     <div class="login-wrapper">
       <div class="login-left">
-        <div class="d-flex align-items-center mb-5 gap-2">
+        <div class="d-flex align-items-center mb-5 gap-3">
           <div
             class="bg-transparent d-flex align-items-center justify-content-center"
-            style="width: 45px; height: 45px"
+            style="width: 56px; height: 56px"
           >
             <img
               src="assets/images/logo.png"
               alt="Haven of Praise Logo"
               style="width: 100%; object-fit: contain"
+              onerror="
+                this.src = 'https://placehold.co/75x75/111827/fbbf24?text=HoP'
+              "
             />
           </div>
-          <div class="text-start" style="line-height: 1.1">
+          <div class="text-start" style="line-height: 1.2">
             <span
-              class="fw-bold d-block text-dark-blue fs-5"
+              class="fw-bold d-block text-dark-blue fs-4"
               style="letter-spacing: -0.5px"
               >Haven of Praise</span
             >
             <span class="fs-xs fw-bold text-dark-blue">Management System</span>
           </div>
         </div>
-
-        <h2 class="fw-bolder mb-4" style="font-size: 2rem">Hello, Welcome!</h2>
-        <p class="fs-sm mb-3 fw-medium">Don't have an account?</p>
-
+        <h2 class="fw-bolder mb-3" style="font-size: 2.2rem">
+          Hello, Welcome!
+        </h2>
+        <p class="mb-4 fw-medium" style="font-size: 1rem; opacity: 0.9">
+          Don't have an account?
+        </p>
         <a href="register-page.html" class="btn btn-register">Register</a>
       </div>
 
       <div class="login-right">
         <h2 class="fw-bolder text-center text-dark-blue mb-4">Login</h2>
-
         <form id="loginForm">
-          <div class="mb-3">
+          <div class="mb-4">
             <label class="form-label">Email Address</label>
             <div class="custom-input-group">
               <input
-                type="text"
+                type="email"
                 class="form-control"
-                placeholder="Email or username"
+                placeholder="Enter your email"
                 required
               />
-              <span class="input-group-text">
-                <i class="bi bi-envelope-fill text-muted"></i>
-              </span>
+              <span class="input-group-text"
+                ><i class="bi bi-envelope-fill"></i
+              ></span>
             </div>
           </div>
-
-          <div class="mb-3">
+          <div class="mb-4">
             <label class="form-label">Password</label>
             <div class="custom-input-group">
               <input
@@ -314,23 +398,10 @@
                 class="input-group-text"
                 id="togglePassword"
                 title="Show/Hide Password"
-              >
-                <i class="bi bi-eye-slash-fill" id="toggleIcon"></i>
-              </span>
+                ><i class="bi bi-eye-slash-fill" id="toggleIcon"></i
+              ></span>
             </div>
           </div>
-
-          <div class="mb-4">
-            <label class="form-label">Login As:</label>
-            <div class="custom-input-group">
-              <select class="form-select" style="cursor: pointer">
-                <option selected>Admin</option>
-                <option value="1">Staff</option>
-                <option value="2">Member</option>
-              </select>
-            </div>
-          </div>
-
           <div
             class="d-flex justify-content-between align-items-center mb-4 px-1"
           >
@@ -339,19 +410,17 @@
                 class="form-check-input mt-0"
                 type="checkbox"
                 id="rememberMe"
-                style="cursor: pointer"
+                style="cursor: pointer; width: 1.1em; height: 1.1em"
               />
               <label
                 class="form-check-label mt-1"
                 for="rememberMe"
                 style="cursor: pointer"
+                >Remember me</label
               >
-                Remember me
-              </label>
             </div>
             <a href="#" class="forgot-link mt-1">Forgot your password?</a>
           </div>
-
           <button type="submit" class="btn-signin">Sign in</button>
         </form>
       </div>
@@ -382,7 +451,10 @@
               <i class="bi bi-check-lg" style="font-size: 3.5rem"></i>
             </div>
             <h4 class="fw-bolder text-dark-blue mb-2">Login Successful!</h4>
-            <p class="text-muted fs-sm mb-4" style="line-height: 1.6">
+            <p
+              class="text-muted mb-4"
+              style="line-height: 1.6; font-size: 0.95rem"
+            >
               Welcome back. You will be redirected to your dashboard
               momentarily.
             </p>
@@ -401,7 +473,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        // --- Login Form Submission Logic ---
+        // --- GLOBAL THEME LOGIC ---
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = themeToggle.querySelector("i");
+        const bodyTag = document.body;
+
+        const savedTheme = localStorage.getItem("hop_theme") || "light";
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener("click", () => {
+          const currentTheme = bodyTag.getAttribute("data-bs-theme");
+          const newTheme = currentTheme === "light" ? "dark" : "light";
+          applyTheme(newTheme);
+        });
+
+        function applyTheme(theme) {
+          bodyTag.setAttribute("data-bs-theme", theme);
+          localStorage.setItem("hop_theme", theme);
+
+          if (theme === "dark") {
+            themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            themeToggle.classList.replace("btn-light", "btn-dark");
+          } else {
+            themeIcon.classList.replace("bi-sun-fill", "bi-moon-fill");
+            themeToggle.classList.replace("btn-dark", "btn-light");
+          }
+        }
+
+        // --- Login Form Logic ---
         const loginForm = document.getElementById("loginForm");
         const btnContinueDashboard = document.getElementById(
           "btnContinueDashboard",
@@ -411,36 +510,27 @@
         );
 
         loginForm.addEventListener("submit", function (e) {
-          e.preventDefault(); // Stop page refresh
-
-          // Show the success modal
+          e.preventDefault();
           successModal.show();
-
-          // Automatically redirect to dashboard after 3 seconds
           setTimeout(() => {
             window.location.href = "dashboard-page.html";
           }, 3000);
         });
 
-        // Allow immediate redirect if they click the button in the modal
         btnContinueDashboard.addEventListener("click", () => {
           window.location.href = "dashboard-page.html";
         });
 
-        // --- Show/Hide Password Logic ---
         const togglePassword = document.getElementById("togglePassword");
         const passwordInput = document.getElementById("passwordInput");
         const toggleIcon = document.getElementById("toggleIcon");
 
         togglePassword.addEventListener("click", function () {
-          // Check current input type
           const type =
             passwordInput.getAttribute("type") === "password"
               ? "text"
               : "password";
           passwordInput.setAttribute("type", type);
-
-          // Toggle the filled eye / eye-slash icon
           toggleIcon.classList.toggle("bi-eye-fill");
           toggleIcon.classList.toggle("bi-eye-slash-fill");
         });
